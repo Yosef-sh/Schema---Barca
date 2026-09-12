@@ -412,10 +412,11 @@
       </div>`;
     }
 
-    const PX_PER_HOUR = 90;
     const START_HOUR  = 8;
     const END_HOUR    = 14;
-    const CARD_GAP    = 5; // px gap between back-to-back cards
+    const CARD_GAP    = 5;
+    const contentH    = document.getElementById('content').clientHeight;
+    const PX_PER_HOUR = Math.max(80, (contentH - 32) / (END_HOUR - START_HOUR));
 
     function toMin(t) {
       const [h, m] = t.split(':').map(Number);
