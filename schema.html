@@ -1,0 +1,554 @@
+<title>Schema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+
+<style>
+  :root {
+    --bg:      #FFFFFF;
+    --surface: #F2F2F7;
+    --card-bg: #FFFFFF;
+    --border:  #E4E4E8;
+    --text:    #1A1918;
+    --text-2:  #6A6764;
+    --text-3:  #AEADB3;
+
+    --c1:#3D5A9F; --c1b:#E8EFF9;
+    --c2:#2A7457; --c2b:#E3F1EA;
+    --c3:#B44B2A; --c3b:#F7EAE5;
+    --c4:#5B3D87; --c4b:#EEE8F8;
+    --c5:#87621E; --c5b:#F4EEE0;
+
+    --accent: #3D5A9F;
+    --fn-h: 'Syne', system-ui, sans-serif;
+    --fn-b: 'DM Sans', system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:      #111318;
+      --surface: #181D28;
+      --card-bg: #1F2435;
+      --border:  #282E42;
+      --text:    #E0DDD8;
+      --text-2:  #8A8797;
+      --text-3:  #484660;
+      --c1b:#162040; --c2b:#0E2A1E; --c3b:#2A1410;
+      --c4b:#1A1230; --c5b:#201808;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:      #111318;
+    --surface: #181D28;
+    --card-bg: #1F2435;
+    --border:  #282E42;
+    --text:    #E0DDD8;
+    --text-2:  #8A8797;
+    --text-3:  #484660;
+    --c1b:#162040; --c2b:#0E2A1E; --c3b:#2A1410;
+    --c4b:#1A1230; --c5b:#201808;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    font-family: var(--fn-b);
+    background: var(--bg);
+    color: var(--text);
+    margin: 0; padding: 0;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    flex-shrink: 0;
+  }
+  .header-label {
+    font-family: var(--fn-h);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin: 0 0 5px;
+  }
+  .header-row { display: flex; align-items: baseline; gap: 10px; }
+  .header-day {
+    font-family: var(--fn-h);
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0; color: var(--text); line-height: 1;
+  }
+  .today-pill {
+    font-size: 10px; font-weight: 600;
+    color: var(--accent);
+    background: var(--c1b);
+    padding: 2px 8px; border-radius: 100px;
+    display: none;
+    font-family: var(--fn-h);
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .today-pill.show { display: inline-block; }
+  .header-date {
+    font-size: 12.5px; color: var(--text-2);
+    margin: 4px 0 0; font-weight: 300;
+  }
+
+  /* ─── CONTENT ─── */
+  .app-content {
+    flex: 1; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 14px 20px;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position: relative;
+  }
+
+  .hour-mark {
+    position: absolute;
+    left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+  .hour-label {
+    width: 44px; flex-shrink: 0;
+    font-size: 11px; font-weight: 500;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding-right: 10px;
+    line-height: 1;
+  }
+  .hour-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── TIMELINE CARD ─── */
+  .tl-card {
+    position: absolute;
+    left: 54px; right: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 13px 10px 12px;
+    border-left: 4px solid transparent;
+  }
+  .tl-top { display: flex; flex-direction: column; gap: 1px; }
+  .tl-name {
+    font-family: var(--fn-h);
+    font-size: 13.5px; font-weight: 700;
+    line-height: 1.2; letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .tl-cat {
+    font-size: 10px; font-weight: 400;
+    color: var(--text-3); font-style: italic;
+    line-height: 1.2;
+  }
+  .tl-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .tl-room {
+    font-family: var(--fn-h);
+    font-size: 18px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .tl-chips { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .tl-chip {
+    font-size: 10px; font-weight: 500;
+    padding: 2px 7px; border-radius: 100px;
+    background: rgba(0,0,0,.07);
+    color: var(--text-2);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .tl-chip { background: rgba(255,255,255,.1); }
+  }
+  :root[data-theme="dark"] .tl-chip { background: rgba(255,255,255,.1); }
+
+  /* Color variants */
+  .tl-card.c1 { background: var(--c1b); border-left-color: var(--c1); }
+  .tl-card.c2 { background: var(--c2b); border-left-color: var(--c2); }
+  .tl-card.c3 { background: var(--c3b); border-left-color: var(--c3); }
+  .tl-card.c4 { background: var(--c4b); border-left-color: var(--c4); }
+  .tl-card.c5 { background: var(--c5b); border-left-color: var(--c5); }
+
+  /* ─── FREE DAY ─── */
+  .free-day {
+    height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px; text-align: center;
+  }
+  .free-icon { font-size: 36px; margin-bottom: 4px; }
+  .free-day h2 { font-family: var(--fn-h); font-size: 17px; font-weight: 700; margin: 0; }
+  .free-day p  { font-size: 13px; color: var(--text-2); margin: 0; font-weight: 300; }
+
+  /* ─── EXAMS VIEW ─── */
+  .exams-wrap { display: flex; flex-direction: column; gap: 20px; }
+
+  .exam-section-title {
+    font-family: var(--fn-h);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--text-3); margin: 0 0 8px;
+  }
+
+  .exam-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .exam-card {
+    display: flex;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+
+  .exam-date-col {
+    width: 66px; flex-shrink: 0;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 14px 4px; gap: 1px;
+  }
+  .exam-day-num {
+    font-family: var(--fn-h);
+    font-size: 22px; font-weight: 700;
+    color: var(--text); line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .exam-month {
+    font-family: var(--fn-h);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .exam-info {
+    flex: 1; padding: 12px 13px;
+    display: flex; flex-direction: column;
+    gap: 3px;
+    border-left: 4px solid transparent;
+  }
+  .exam-course {
+    font-family: var(--fn-h);
+    font-size: 13px; font-weight: 700;
+    line-height: 1.2; color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .exam-cat {
+    font-size: 10px; font-weight: 400;
+    color: var(--text-3); font-style: italic;
+    margin-top: -1px; line-height: 1.2;
+  }
+  .exam-time {
+    font-size: 13px; font-weight: 500;
+    color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .exam-note {
+    font-size: 10.5px; color: var(--text-3);
+    font-weight: 400; margin-top: 1px;
+    font-style: italic;
+  }
+
+  /* ─── TAB BAR ─── */
+  .tab-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1; display: flex;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1px; padding: 9px 2px 10px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    border: none; background: none;
+    color: var(--text-3); position: relative;
+    min-height: 54px; transition: color 0.12s;
+  }
+  .tab.active { color: var(--accent); }
+  .tab-indicator {
+    position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 20px; height: 2.5px;
+    border-radius: 0 0 3px 3px;
+    background: var(--accent);
+    opacity: 0; transition: opacity 0.12s;
+  }
+  .tab.active .tab-indicator { opacity: 1; }
+  .tab-abbr {
+    font-family: var(--fn-h);
+    font-size: 13px; font-weight: 700;
+  }
+  .tab-name {
+    font-size: 9px; font-weight: 400;
+    letter-spacing: 0.03em; font-family: var(--fn-h);
+    opacity: .7;
+  }
+  .tab-pip {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: currentColor; margin-top: 1px; opacity: 0;
+  }
+  .tab-pip.on { opacity: .65; }
+  .tab.active .tab-pip.on { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<header class="app-header">
+  <p class="header-label">Universitat de Barcelona · 2026–2027</p>
+  <div class="header-row">
+    <h1 class="header-day" id="hDay">–</h1>
+    <span class="today-pill" id="hToday">Idag</span>
+  </div>
+  <p class="header-date" id="hDate">–</p>
+</header>
+
+<main class="app-content" id="content"></main>
+<nav class="tab-bar" id="tabbar"></nav>
+
+<script>
+  const DAYS    = ['dl','dt','dc','dj','dv','tent'];
+  const DAY_SV  = {dl:'Måndag',dt:'Tisdag',dc:'Onsdag',dj:'Torsdag',dv:'Fredag',tent:'Tentor'};
+  const DAY_SV3 = {dl:'Mån',dt:'Tis',dc:'Ons',dj:'Tor',dv:'Fre',tent:'Tent.'};
+  const DAY_CA  = {dl:'dl.',dt:'dt.',dc:'dc.',dj:'dj.',dv:'dv.',tent:'📋'};
+  const JS_DAY  = {1:'dl',2:'dt',3:'dc',4:'dj',5:'dv'};
+
+  const sched = {
+    dl:[
+      {en:"Internationalization of Business", cat:"Internacionalització de l'Empresa", t1:"08:00", t2:"10:00", room:"Aula 2011", grp:"E1", typ:"Teori",      c:4},
+      {en:"Cross-cultural Management",        cat:"Gestió Intercultural",              t1:"10:00", t2:"12:00", room:"Aula 2015", grp:"A1", typ:"Teori",      c:5},
+      {en:"Financial Instruments and Markets",cat:"Instruments i Mercats Financers",   t1:"12:00", t2:"14:00", room:"Aula 1000", grp:"A6", typ:"Teori",      c:3}
+    ],
+    dt:[
+      {en:"Organizational Management", cat:"Direcció de les Organitzacions", t1:"08:00", t2:"10:00", room:"Aula 1017", grp:"A6", typ:"Teori",  c:1},
+      {en:"Quality Management",        cat:"Gestió de la Qualitat",          t1:"10:00", t2:"12:00", room:"Aula 2012", grp:"A6", typ:"Teori",  c:2}
+    ],
+    dc:[
+      {en:"Internationalization of Business", cat:"Internacionalització de l'Empresa", t1:"08:00", t2:"10:00", room:"Aula 2011", grp:"E1", typ:"Pràctiques", c:4},
+      {en:"Financial Instruments and Markets",cat:"Instruments i Mercats Financers",   t1:"12:00", t2:"14:00", room:"Aula 1000", grp:"A6", typ:"Pràctiques", c:3}
+    ],
+    dj:[
+      {en:"Organizational Management", cat:"Direcció de les Organitzacions", t1:"08:00", t2:"10:00", room:"Aula 1017", grp:"A6", typ:"Pràctiques", c:1},
+      {en:"Cross-cultural Management", cat:"Gestió Intercultural",           t1:"10:00", t2:"12:00", room:"Aula 2015", grp:"A1", typ:"Pràctiques", c:5}
+    ],
+    dv:[
+      {en:"Quality Management", cat:"Gestió de la Qualitat", t1:"10:00", t2:"12:00", room:"Aula 2012", grp:"A6", typ:"Pràctiques", c:2}
+    ]
+  };
+
+  const MONTHS_SV = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+
+  const exams = {
+    ordinarie: [
+      {day:18, month:11, year:2026, en:"Internationalization of Business", cat:"Internacionalització de l'Empresa", time:"16:00–18:30", note:"Gr. E1 – Ordinari", c:4},
+      {day:8,  month:0,  year:2027, en:"Financial Instruments and Markets", cat:"Instruments i Mercats Financers",  time:"12:00–15:00", note:"Ordinari", c:3},
+      {day:12, month:0,  year:2027, en:"Internationalization of Business", cat:"Internacionalització de l'Empresa", time:"12:00–15:00", note:"Ordinari", c:4},
+      {day:14, month:0,  year:2027, en:"Quality Management",               cat:"Gestió de la Qualitat",            time:"15:00–18:00", note:"Ordinari", c:2},
+      {day:15, month:0,  year:2027, en:"Cross-cultural Management",        cat:"Gestió Intercultural",             time:"09:00–12:00", note:"Ordinari", c:5},
+      {day:18, month:0,  year:2027, en:"Organizational Management",        cat:"Direcció de les Organitzacions",   time:"12:00–15:00", note:"Ordinari", c:1}
+    ],
+    omtentamen: [
+      {day:29, month:0,  year:2027, en:"Financial Instruments and Markets", cat:"Instruments i Mercats Financers",  time:"12:00–15:00", note:"Omtentamen", c:3},
+      {day:2,  month:1,  year:2027, en:"Internationalization of Business", cat:"Internacionalització de l'Empresa", time:"12:00–15:00", note:"Omtentamen", c:4},
+      {day:4,  month:1,  year:2027, en:"Quality Management",               cat:"Gestió de la Qualitat",            time:"12:00–15:00", note:"Omtentamen", c:2},
+      {day:5,  month:1,  year:2027, en:"Cross-cultural Management",        cat:"Gestió Intercultural",             time:"09:00–12:00", note:"Omtentamen", c:5},
+      {day:8,  month:1,  year:2027, en:"Organizational Management",        cat:"Direcció de les Organitzacions",   time:"12:00–15:00", note:"Omtentamen", c:1}
+    ]
+  };
+
+  const todayJS  = new Date().getDay();
+  const todayKey = JS_DAY[todayJS] || 'dl';
+  let active = todayKey;
+
+  // Build tabs
+  const tabbar = document.getElementById('tabbar');
+  DAYS.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (d === active ? ' active' : '');
+    btn.dataset.day = d;
+    btn.setAttribute('aria-label', DAY_SV[d]);
+    const hasClass = sched[d] ? sched[d].length > 0 : true;
+    btn.innerHTML = `
+      <div class="tab-indicator"></div>
+      <span class="tab-abbr">${DAY_CA[d]}</span>
+      <span class="tab-name">${DAY_SV3[d]}</span>
+      <div class="tab-pip ${hasClass ? 'on' : ''}"></div>
+    `;
+    btn.addEventListener('click', () => show(d));
+    tabbar.appendChild(btn);
+  });
+
+  function renderCourses(day) {
+    const classes = sched[day] || [];
+    if (!classes.length) {
+      return `<div class="free-day">
+        <div class="free-icon">☀️</div>
+        <h2>Ingen lektion</h2>
+        <p>Inga kurser idag.</p>
+      </div>`;
+    }
+
+    const PX_PER_HOUR = 90;
+    const START_HOUR  = 8;
+    const END_HOUR    = 14;
+    const CARD_GAP    = 5; // px gap between back-to-back cards
+
+    function toMin(t) {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    }
+    function toPx(min) {
+      return (min - START_HOUR * 60) / 60 * PX_PER_HOUR;
+    }
+
+    // Hour marks
+    const marks = [];
+    for (let h = START_HOUR; h <= END_HOUR; h++) {
+      const top = (h - START_HOUR) * PX_PER_HOUR;
+      marks.push(`<div class="hour-mark" style="top:${top}px">
+        <span class="hour-label">${h}:00</span>
+        <div class="hour-line"></div>
+      </div>`);
+    }
+
+    // Cards
+    const cards = classes.map(cl => {
+      const t1 = toMin(cl.t1);
+      const t2 = toMin(cl.t2);
+      const top    = toPx(t1) + CARD_GAP;
+      const height = toPx(t2) - toPx(t1) - CARD_GAP;
+      return `<div class="tl-card c${cl.c}" style="top:${top}px;height:${height}px">
+        <div class="tl-top">
+          <div class="tl-name">${cl.en}</div>
+          <div class="tl-cat">${cl.cat}</div>
+        </div>
+        <div class="tl-bottom">
+          <div class="tl-room">${cl.room}</div>
+          <div class="tl-chips">
+            <span class="tl-chip">Gr. ${cl.grp}</span>
+            <span class="tl-chip">${cl.typ}</span>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    const totalH = (END_HOUR - START_HOUR) * PX_PER_HOUR + 20;
+    return `<div class="timeline" style="height:${totalH}px;margin-top:12px">${marks.join('')}${cards.join('')}</div>`;
+  }
+
+  function examCard(e) {
+    return `<div class="exam-card c${e.c}">
+      <div class="exam-date-col">
+        <span class="exam-day-num">${e.day}</span>
+        <span class="exam-month">${MONTHS_SV[e.month]}</span>
+      </div>
+      <div class="exam-info">
+        <div class="exam-course">${e.en}</div>
+        <div class="exam-cat">${e.cat}</div>
+        <div class="exam-time">${e.time}</div>
+        <div class="exam-note">${e.note}</div>
+      </div>
+    </div>`;
+  }
+
+  function renderExams() {
+    return `<div class="exams-wrap">
+      <div>
+        <p class="exam-section-title">Ordinarie tentor</p>
+        <div class="exam-list">${exams.ordinarie.map(examCard).join('')}</div>
+      </div>
+      <div>
+        <p class="exam-section-title">Omtentamen</p>
+        <div class="exam-list">${exams.omtentamen.map(examCard).join('')}</div>
+      </div>
+    </div>`;
+  }
+
+  function show(day) {
+    active = day;
+    document.querySelectorAll('.tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.day === day));
+
+    const isToday = day === todayKey;
+    const isTent  = day === 'tent';
+
+    document.getElementById('hDay').textContent = DAY_SV[day];
+    document.getElementById('hToday').classList.toggle('show', isToday && !isTent);
+
+    if (isTent) {
+      document.getElementById('hDate').textContent = 'Alla examinationstillfällen';
+    } else {
+      const d = new Date();
+      d.setDate(d.getDate() + (DAYS.indexOf(day) - DAYS.indexOf(todayKey)));
+      document.getElementById('hDate').textContent =
+        d.toLocaleDateString('sv-SE', {weekday:'long',year:'numeric',month:'long',day:'numeric'})
+         .replace(/^\w/, c => c.toUpperCase());
+    }
+
+    document.getElementById('content').innerHTML =
+      isTent ? renderExams() : renderCourses(day);
+  }
+
+  show(active);
+
+  // PWA
+  const icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+    <rect width="180" height="180" rx="38" fill="#3D5A9F"/>
+    <rect x="34" y="52" width="112" height="96" rx="14" fill="white" fill-opacity=".12"/>
+    <rect x="34" y="52" width="112" height="34" rx="14" fill="white" fill-opacity=".2"/>
+    <circle cx="62" cy="116" r="7" fill="white" fill-opacity=".9"/>
+    <circle cx="90" cy="116" r="7" fill="white" fill-opacity=".9"/>
+    <circle cx="118" cy="116" r="7" fill="white" fill-opacity=".9"/>
+    <circle cx="62" cy="137" r="7" fill="white" fill-opacity=".55"/>
+    <circle cx="90" cy="137" r="7" fill="white" fill-opacity=".55"/>
+  </svg>`;
+  const iconURI = 'data:image/svg+xml,' + encodeURIComponent(icon);
+  const manifest = {
+    name:"Veckoschema UB", short_name:"Schema",
+    start_url: window.location.href,
+    display:"standalone", orientation:"portrait-primary",
+    background_color:"#FFFFFF", theme_color:"#FFFFFF",
+    icons:[{src:iconURI,sizes:"any",type:"image/svg+xml",purpose:"any maskable"}]
+  };
+  [['mobile-web-app-capable','yes'],
+   ['apple-mobile-web-app-capable','yes'],
+   ['apple-mobile-web-app-status-bar-style','black-translucent'],
+   ['apple-mobile-web-app-title','Schema'],
+   ['theme-color','#FFFFFF']
+  ].forEach(([n,c]) => {
+    const m = document.createElement('meta');
+    m.name = n; m.content = c;
+    document.head.appendChild(m);
+  });
+  const il = document.createElement('link');
+  il.rel = 'apple-touch-icon'; il.href = iconURI;
+  document.head.appendChild(il);
+  const ml = document.createElement('link');
+  ml.rel = 'manifest';
+  ml.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+  document.head.appendChild(ml);
+</script>
